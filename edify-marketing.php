@@ -2,10 +2,10 @@
 
 /**
  * Plugin Name: Edify Marketing
- * Description: Integra Site Edify às plataformas de Marketing
+ * Description: Provê funcionlidades relacionadas a àrea de Marketing da Edify
  * Author: Edify Education
  * Version: 1.0
- * URL: https://edifyeducation.com.br
+ * URL: https://www.notion.so/edifyeducation/Edify-Marketing-51a42e692f494be89cf992fb46ee6f39?pvs=4
  */
 
 require_once('vendor/autoload.php');
