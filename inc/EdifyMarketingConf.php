@@ -46,6 +46,16 @@ class EdifyMarketingConf{
         
         });
 
+        add_action('rest_api_init', function(){
+            register_rest_route('edify-marketing', 'pipehook', array(
+                "methods" => 'POST',
+                "callback" => function( \WP_REST_request $request ){
+                    update_option('pipehook', 'webhook pipedrive run '. date("h:i:sa"));
+                },
+                "permission_callback" => '__return_true',
+            ));
+        });
+
     }
     
 }
