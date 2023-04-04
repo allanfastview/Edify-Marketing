@@ -50,7 +50,7 @@ class EdifyMarketingConf{
             register_rest_route('edify-marketing', 'pipehook', array(
                 "methods" => 'POST',
                 "callback" => function( \WP_REST_request $request ){
-                    update_option('pipehook', 'webhook pipedrive run '. date("h:i:sa"));
+                    update_option('pipehook', $request->get_body_params() );
                 },
                 "permission_callback" => '__return_true',
             ));
