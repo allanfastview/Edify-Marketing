@@ -50,10 +50,49 @@ class EdifyMarketingConf{
             register_rest_route('edify-marketing', 'pipehook', array(
                 "methods" => 'POST',
                 "callback" => function( \WP_REST_request $request ){
-                    update_option('pipehook', $request->get_body_params() );
+					
+					$params = $request->get_params();
+                    			
+					//verifica se o negócio atualizado encontra-se em um funil rastreado
+					if( $params['current']['pipeline_id'] == 22 ){ //TODO: As pipelines rastreadas serão definidas dinamicamente através do painel administrativo do plugin
+						
+                        //TODO: Esta relação de campos será definida de forma dinâmica através do painel administrativo do plugin através de uma comunicação com a API do RD MARKETING e do Pipedrive
+						$campos_rastreados = [
+							'a328990fd05072244a9c2eb74ce4a7509dc5f61e' => "cf_pipedrive_classificacao_do_agendamento_inbound", //Classificação do agendamento INBOUND
+							'bbbcde8b312afdf4842fdc9c983fa6b9d82cbda8' => "cf_pipedrive_classificacao_do_lead_inbound", //Classificação do Lead INBOUND
+							'bde6b6eab60d74426fe90f01b784af88aa12be9c' => "cf_pipedrive_qualificacao_do_lead_inbound", //Qualificação do Lead INBOUND
+							'undone_activities_count' => "cf_pipedrive_atividades_para_fazer" //Atividades para fazer
+						];
+						$campos_a_serem_enviados = [];
+
+						foreach( $campos_rastreados as $campo_pipedrive => $campo_rdstation ){
+
+							//verifica se houve atualização em algum dos campos rastreados
+							if( $params['current'][$campo_pipedrive] != $params['previous'][$campo_pipedrive] )
+							    $campos_a_serem_enviados[ $campos_rastreados[$campo_pipedrive] ]= $params['current'][$campo_pipedrive];
+							
+						}
+
+                        $campos_a_serem_enviados = array_merge( $campos_a_serem_enviados, 
+                            [
+                                "email" => "dantas.alves.allan@gmail.com",
+                                "identificador" => "pipedrive-deal-update",
+                            ] 
+                        );
+
+                        $data = [
+                            "event_type" => "CONVERSION",
+                            "event_family" => "CDP",
+                            "payload" => $campos_a_serem_enviados
+                        ];
+                    	
+						return new \WP_REST_response( $data );
+
+					}
                 },
                 "permission_callback" => '__return_true',
             ));
+			
         });
 
     }
