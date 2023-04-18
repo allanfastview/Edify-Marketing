@@ -91,7 +91,7 @@ class EdifyMarketingConf{
                                                 $dealField = PipedriveService::get_dealField( $dealField->id );
                                                 
                                                 foreach( $dealField->data->options as $option ){
-                                                    if( $option->id == $fieldValue['id'] ){
+                                                    if( $option->id == $params['data']['custom_fields'][ $key ]['id'] ){
                                                         $campos_a_serem_enviados_rd_marketing[ $campos_rastreados[ $key ] ] = $option->label;
                                                         break;
                                                     }
