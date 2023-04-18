@@ -1,7 +1,9 @@
 {
     "require": {
         "curl/curl": "^2.5",
-        "htmlburger/carbon-fields": "^3.5"
+        "htmlburger/carbon-fields": "^3.5",
+        "iamntz/carbon-fields-urlpicker": "^3.0",
+        "htmlburger/carbon-field-number": "^3.0"
     },
     "autoload": {
         "psr-4":{

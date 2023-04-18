@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e89826dc3b385a5806adbcd1ab5bf991",
+    "content-hash": "2e099dad3871d15e8c60372bf762e076",
     "packages": [
         {
             "name": "curl/curl",
@@ -59,6 +59,61 @@
                 "dot"
             ],
             "time": "2022-12-14T13:27:59+00:00"
+        },
+        {
+            "name": "htmlburger/carbon-field-number",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/htmlburger/carbon-field-number.git",
+                "reference": "3bddfaf256472d6071c62e566d011e1f2cdae0c6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/htmlburger/carbon-field-number/zipball/3bddfaf256472d6071c62e566d011e1f2cdae0c6",
+                "reference": "3bddfaf256472d6071c62e566d011e1f2cdae0c6",
+                "shasum": ""
+            },
+            "require": {
+                "htmlburger/carbon-fields": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "field.php"
+                ],
+                "psr-4": {
+                    "Carbon_Field_Number\\": "core/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Plamen Kostadinov",
+                    "email": "pkostadinov.2create@gmail.com"
+                },
+                {
+                    "name": "Atanas Angelov",
+                    "email": "atanas.angelov.dev@gmail.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Viktor Vasilev",
+                    "email": "liberalcho@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Carbon Fields extension, that adds a number field type.",
+            "homepage": "https://github.com/htmlburger/carbon-field-number/",
+            "keywords": [
+                "carbon-field",
+                "carbon-field-number",
+                "wordpress"
+            ],
+            "time": "2018-12-21T12:45:35+00:00"
         },
         {
             "name": "htmlburger/carbon-fields",
@@ -193,6 +248,48 @@
             "description": "WordPress developer-friendly custom fields for post types, taxonomy terms, users, comments, widgets, options and more.",
             "homepage": "http://carbonfields.net/",
             "time": "2023-03-10T09:21:11+00:00"
+        },
+        {
+            "name": "iamntz/carbon-fields-urlpicker",
+            "version": "3.0.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iamntz/carbon-fields-urlpicker.git",
+                "reference": "014b4b43bc677b7d8d135b5ede94d57b436f8e89"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/iamntz/carbon-fields-urlpicker/releases/download/v3.0.10/carbon-fields-urlpicker.zip",
+                "reference": "014b4b43bc677b7d8d135b5ede94d57b436f8e89",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "field.php"
+                ],
+                "psr-4": {
+                    "Carbon_Field_UrlPicker\\": "core/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Ionuț Staicu",
+                    "email": "github@iamntz.com"
+                }
+            ],
+            "description": "Carbon Fields extension that adds a URL picker field type.",
+            "homepage": "https://github.com/iamntz/carbon-fields-urlpicker",
+            "keywords": [
+                "carbon-field",
+                "carbon-fields-urlpicker",
+                "wordpress"
+            ],
+            "time": "2023-03-10T07:33:50+00:00"
         }
     ],
     "packages-dev": [],
