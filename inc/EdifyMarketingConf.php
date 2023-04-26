@@ -12,20 +12,153 @@ class EdifyMarketingConf{
     public const RD_API_DOMAIN = "https://api.rd.services/";
     public const PIPEDRIVE_API_DOMAIN = "https://api.pipedrive.com/";
 
+    //TODO: Mover para PipedriveService
+    private static function get_person_fields(){
+
+        $person_fields = PipedriveService::get_person_fields();
+        $fields = array();
+        foreach( $person_fields->data as $person_field ){
+            $fields[ $person_field->key ] = $person_field->name;
+        }
+        return $fields;
+    }
+
+    //TODO: Mover para PipedriveService
+    private static function get_orgaization_fields(){
+
+        $entity_fields = PipedriveService::get_organization_fields();
+        $fields = array();
+        foreach( $entity_fields->data as $entity_field ){
+            $fields[ $entity_field->key ] = $entity_field->name;
+        }
+        return $fields; 
+
+    }
+
+    //TODO: Mover para PipedriveService
+    private static function get_deal_fields(){
+
+        $entity_fields = PipedriveService::get_dealFields();
+        $fields = array();
+        foreach( $entity_fields->data as $entity_field ){
+            $fields[ $entity_field->key ] = $entity_field->name;
+        }
+        return $fields;
+
+    }
+
+  
     public static function start(){
 
         self::register_endpoints();
 
         add_action('carbon_fields_fields_registered', function(){
+            //TODO: Criar função separada para tratar criação dos fileds e passar como callback
             Container::make( 'theme_options', 'Edify Marketing' )
-                ->add_fields( array(
-                    Field::make('separator', 'rdmarketing_separator', 'RD Marketing'),
+                ->add_tab('RD Marketing', array(
+
+                    Field::make('separator', 'rdmarketing_api', 'Configuração API'),
+
                     Field::make( 'text', 'edify_marketing_client_id', 'Client ID' ),
+
                     Field::make( 'text', 'edify_marketing_client_secret', 'Client Secret' ),
+
                     Field::make( 'text', 'edify_marketing_refresh_token', 'Refresh Token' ),
-                    Field::make('separator', 'pipedrive_separator', 'Pipedrive'),
+
+                ))
+                ->add_tab('Pipedrive', array(
+                    
+                    Field::make('separator', 'pipedrive_api', 'Configuração API'),
+
                     Field::make('text', 'pipedrive_token', 'Token API'),
-                ) );
+
+                    /** Email para vínculo entre Pipedrive e RD Marketing */
+                        Field::make('separator', 'pipe_rd_link', 'Editar vínculo entre Pipedrive e RD Marketing'),
+                        Field::make('select', 'entity_pipedrive_rd', "Entidade Email")
+                            ->add_options( array(
+                                "person" => "Pessoa",
+                                "deal" => "Negócio",
+                                "organization" => "Organização"
+                            ))
+                            ->set_width(50),
+                            //Custom Fields for person
+                            Field::make('select', 'custom_fields_person', "Campo Email")
+                            ->add_options( $person_fields = self::get_person_fields() )
+                            ->set_conditional_logic( [
+                                [
+                                    'field'     => 'entity_pipedrive_rd',
+                                    'value'     => "person",
+                                    'compare'   => "="
+                                ]
+                            ] )
+                            ->set_width(50),
+                            //Custom Fields for Organization
+                            Field::make('select', 'custom_fields_organization', "Campo Email")
+                            ->add_options( $organization_fields = self::get_orgaization_fields() )
+                            ->set_conditional_logic( [
+                                [
+                                    'field'     => 'entity_pipedrive_rd',
+                                    'value'     => "organization",
+                                    'compare'   => "="
+                                ]
+                            ] )
+                            ->set_width(50),
+                            //Custom Fields for Deal
+                            Field::make('select', 'custom_fields_deal', "Campo Email")
+                            ->add_options( $deal_fields = self::get_deal_fields() )
+                            ->set_conditional_logic( [
+                                [
+                                    'field'     => 'entity_pipedrive_rd',
+                                    'value'     => "deal",
+                                    'compare'   => "="
+                                ]
+                            ] )
+                            ->set_width(50),
+                    /** end  */
+
+                    /** Nome para vínculo entre Pipedrive e RD Marketing */
+                        Field::make('select', 'entity_pipedrive_rd_name', "Entidade Nome")
+                            ->add_options( array(
+                                "person" => "Pessoa",
+                                "deal" => "Negócio",
+                                "organization" => "Organização"
+                            ))
+                            ->set_width(50),
+                            //Custom Fields for person
+                            Field::make('select', 'custom_fields_person_name', "Campo Nome")
+                            ->add_options( $person_fields )
+                            ->set_conditional_logic( [
+                                [
+                                    'field'     => 'entity_pipedrive_rd_name',
+                                    'value'     => "person",
+                                    'compare'   => "="
+                                ]
+                            ] )
+                            ->set_width(50),
+                            //Custom Fields for Organization
+                            Field::make('select', 'custom_fields_organization_name', "Campo Nome")
+                            ->add_options( $organization_fields )
+                            ->set_conditional_logic( [
+                                [
+                                    'field'     => 'entity_pipedrive_rd_name',
+                                    'value'     => "organization",
+                                    'compare'   => "="
+                                ]
+                            ] )
+                            ->set_width(50),
+                            //Custom Fields for Deal
+                            Field::make('select', 'custom_fields_deal_name', "Campo Nome")
+                            ->add_options( $deal_fields )
+                            ->set_conditional_logic( [
+                                [
+                                    'field'     => 'entity_pipedrive_rd_name',
+                                    'value'     => "deal",
+                                    'compare'   => "="
+                                ]
+                            ] )
+                            ->set_width(50),
+                    /** end */
+                ));
         });
     }
 
@@ -107,10 +240,50 @@ class EdifyMarketingConf{
                             }
                         }
 
-                        //Obtem email do lead vinculado ao negócio alterado
-                        $person = PipedriveService::get_person( $params['data']['person_id'] );
-                        $person_email = $person->data->primary_email;
-                        $person_name = $person->data->name;
+
+                        /** Resgata email em comúm entre Pipedrive e RD Marketing */
+                
+                            switch( carbon_get_theme_option('entity_pipedrive_rd') ){
+                                case 'person':
+                                    $field = carbon_get_theme_option( 'custom_fields_person' );
+                                    $person = PipedriveService::get_person( $params['data']['person_id'] );
+                                    $person_email = ( is_array( $person->data->$field ) )?  $person->data->$field[0]->value :  $person->data->$field;
+                                    break;
+                                case 'deal':
+                                    $field = carbon_get_theme_option( 'custom_fields_deal' );
+                                    $deal = PipedriveService::get_deal( $params['data']['id'] );
+                                    $person_email = ( is_array( $deal->data->$field ) )?  $deal->data->$field[0]->value :  $deal->data->$field;
+                                    break;
+                                case 'organization':
+                                    //TODO: Implementar código para quando email prover da entidade organization
+                                    break;
+                                default:
+                            }
+
+                        /** end  */
+
+                       
+
+                        /** Resgata nome em comúm entre Pipedrive e RD Marketing */
+
+                            switch( carbon_get_theme_option('entity_pipedrive_rd_name') ){
+                                case 'person':
+                                    $field = carbon_get_theme_option( 'custom_fields_person_name' );
+                                    $person = PipedriveService::get_person( $params['data']['person_id'] );
+                                    $person_name = ( is_array( $person->data->$field ) )?  $person->data->$field[0]->value :  $person->data->$field;
+                                    break;
+                                case 'deal':
+                                    $field = carbon_get_theme_option( 'custom_fields_deal_name' );
+                                    $deal = PipedriveService::get_deal( $params['data']['id'] );
+                                    $person_email = ( is_array( $deal->data->$field ) )?  $deal->data->$field[0]->value :  $deal->data->$field;
+                                    break;
+                                case 'organization':
+                                    //TODO: Implementar código para quando email prover da entidade organization
+                                    break;
+                                default:
+                            }
+
+                        /** end  */
 
                         $campos_a_serem_enviados_rd_marketing = array_merge( $campos_a_serem_enviados_rd_marketing, 
                             [
